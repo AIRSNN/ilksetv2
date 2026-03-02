@@ -43,6 +43,9 @@ def run_chip_detect(port, python_exe, baud):
 def flash_firmware(port, baud, chip, python_exe):
     firmware_dir = os.path.join(os.path.dirname(__file__), "firmware")
     
+    if not os.path.exists(firmware_dir) or not os.path.isdir(firmware_dir):
+        return False, f"MISSING_FIRMWARE: Klasör bulunamadı ({firmware_dir})"
+        
     if chip == "ESP8266":
         bin_file = "stub_esp8266.bin"
         offset = "0x00000"
@@ -54,7 +57,7 @@ def flash_firmware(port, baud, chip, python_exe):
 
     bin_path = os.path.join(firmware_dir, bin_file)
     if not os.path.exists(bin_path):
-        return False, f"MISSING_FIRMWARE: {bin_path}"
+        return False, f"MISSING_FIRMWARE: Dosya bulunamadı ({bin_path})"
 
     cmd = [
         python_exe, "-m", "esptool",
@@ -79,7 +82,7 @@ def main():
     ap.add_argument("--port", required=True)
     ap.add_argument("--baud", type=int, default=921600)
     ap.add_argument("--timeout", type=float, default=10.0)
-    args = ap.parse_args()
+    args, _ = ap.parse_known_args()
 
     t0 = time.time()
     tail_log = []
@@ -92,6 +95,7 @@ def main():
             "chip": chip,
             "message": message,
             "baud": args.baud,
+            "stage": "flash",
             "elapsed_ms": int((time.time() - t0) * 1000),
             "tail_log": tail_log[-20:]
         }, ensure_ascii=False))

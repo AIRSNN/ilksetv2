@@ -42,6 +42,12 @@ def read_lines_until(ser: serial.Serial, deadline_s: float, want_prefixes: tuple
                     return line
     return None
 
+def mask_password_in_text(text, password):
+    if not password or len(password.strip()) == 0:
+        return text
+    return text.replace(password, "XXXXX")
+
+
 def main():
     ap = argparse.ArgumentParser(description="ILKSET provisioning helper")
     ap.add_argument("--port", required=True)
@@ -53,7 +59,7 @@ def main():
     ap.add_argument("--gw", default="")
     ap.add_argument("--mask", default="")
     ap.add_argument("--timeout", type=float, default=3.0)
-    args = ap.parse_args()
+    args, _ = ap.parse_known_args()
 
     t0 = time.time()
     tail_log = []
@@ -62,7 +68,7 @@ def main():
         print(json.dumps({
             "port": args.port, "ok": False,
             "message": "MISSING_ARGS: ssid and pass required unless --ping-only",
-            "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000), "tail_log": tail_log
+            "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000), "tail_log": tail_log
         }, ensure_ascii=False))
         return
 
@@ -87,6 +93,7 @@ def main():
             "port": args.port, "ok": False,
             "message": f"SERIAL_OPEN_FAIL: {one_line(str(e))}",
             "baud": args.baud,
+            "stage": "provision",
             "elapsed_ms": int((time.time() - t0) * 1000), "tail_log": tail_log
         }, ensure_ascii=False))
         return
@@ -115,7 +122,7 @@ def main():
             print(json.dumps({
                 "port": args.port, "ok": False,
                 "message": "STUB_NOT_RESPONDING: @PONG alınamadı",
-                "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000),
+                "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000),
                 "tail_log": tail_log
             }, ensure_ascii=False))
             return
@@ -124,7 +131,7 @@ def main():
             print(json.dumps({
                 "port": args.port, "ok": True,
                 "message": pong,
-                "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000),
+                "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000),
                 "tail_log": tail_log
             }, ensure_ascii=False))
             return
@@ -136,7 +143,7 @@ def main():
             print(json.dumps({
                 "port": args.port, "ok": False,
                 "message": "ACK_TIMEOUT: @ACK alınamadı",
-                "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000),
+                "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000),
                 "tail_log": tail_log
             }, ensure_ascii=False))
             return
@@ -144,17 +151,17 @@ def main():
         ok = ack.startswith("@ACK OK")
         print(json.dumps({
             "port": args.port, "ok": ok,
-            "message": ack,
-            "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000),
-            "tail_log": tail_log
+            "message": mask_password_in_text(ack, args.password),
+            "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000),
+            "tail_log": [mask_password_in_text(line, args.password) for line in tail_log]
         }, ensure_ascii=False))
 
     except Exception as e:
         print(json.dumps({
             "port": args.port, "ok": False,
             "message": f"ERROR: {one_line(str(e))}",
-            "baud": args.baud, "elapsed_ms": int((time.time() - t0) * 1000),
-            "tail_log": tail_log
+            "baud": args.baud, "stage": "provision", "elapsed_ms": int((time.time() - t0) * 1000),
+            "tail_log": [mask_password_in_text(line, args.password) for line in tail_log]
         }, ensure_ascii=False))
     finally:
         try:
