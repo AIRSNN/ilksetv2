@@ -840,34 +840,34 @@ class _PortDetailPageState extends State<PortDetailPage> {
                             (v) => st.pass = v,
                           ),
                           const SizedBox(height: 24),
-                          Opacity(
-                            opacity: 0.75,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildTextField(
-                                  "IP (ops.)",
-                                  st.ip,
-                                  (v) => st.ip = v,
-                                  hint: "Örn: 192.168.1.50",
+                                Opacity(
+                                  opacity: 0.75,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      _buildTextField(
+                                        "Cihaz IP (opsiyonel)",
+                                        st.ip,
+                                        (v) => st.ip = v,
+                                        hint: "Örn: 192.168.55.25",
+                                      ),
+                                      const SizedBox(height: 16),
+                                      _buildTextField(
+                                        "Ağ Geçidi / Modem IP (opsiyonel)",
+                                        st.gw,
+                                        (v) => st.gw = v,
+                                        hint: "Örn: 192.168.55.1",
+                                      ),
+                                      const SizedBox(height: 16),
+                                      _buildTextField(
+                                        "Ağ Maskesi / Subnet (opsiyonel)",
+                                        st.mask,
+                                        (v) => st.mask = v,
+                                        hint: "Örn: 255.255.255.0",
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 16),
-                                _buildTextField(
-                                  "Gateway (ops.)",
-                                  st.gw,
-                                  (v) => st.gw = v,
-                                  hint: "Örn: 192.168.1.1",
-                                ),
-                                const SizedBox(height: 16),
-                                _buildTextField(
-                                  "Mask (ops.)",
-                                  st.mask,
-                                  (v) => st.mask = v,
-                                  hint: "Örn: 255.255.255.0",
-                                ),
-                              ],
-                            ),
-                          ),
                           const SizedBox(height: 48),
                           SizedBox(
                             width: double.infinity,
