@@ -27,7 +27,7 @@ def run_ping_check(port, python_exe, baud):
     return False, "NO_PONG", []
 
 def run_chip_detect(port, python_exe, baud):
-    cmd = [python_exe, "-m", "esptool", "--port", port, "--baud", str(baud), "--connect-attempts", "2", "chip_id"]
+    cmd = [python_exe, "-m", "esptool", "--port", port, "--baud", str(baud), "--connect-attempts", "7", "chip_id"]
     try:
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=8)
         output = res.stdout + res.stderr

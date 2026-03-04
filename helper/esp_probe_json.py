@@ -8,7 +8,7 @@ import time
 def probe_port(port, baud, timeout):
     t0 = time.time()
     try:
-        cmd = [sys.executable, "-m", "esptool", "--port", port, "--baud", str(baud), "--connect-attempts", "2", "read_mac"]
+        cmd = [sys.executable, "-m", "esptool", "--port", port, "--baud", str(baud), "--connect-attempts", "7", "read_mac"]
         
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         output = result.stdout + result.stderr
