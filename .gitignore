@@ -1,0 +1,19 @@
+# Flutter build artifacts (intermediate, not release)
+ilkset_app/build/windows/x64/CMakeFiles/
+ilkset_app/build/windows/x64/*.cmake
+ilkset_app/build/windows/x64/Makefile
+ilkset_app/build/windows/x64/_deps/
+ilkset_app/build/windows/x64/plugins/
+ilkset_app/.dart_tool/
+ilkset_app/.flutter-plugins
+ilkset_app/.flutter-plugins-dependencies
+ilkset_app/.packages
+
+# Python virtualenv
+helper/venv/
+
+# General
+*.log
+*.tmp
+__pycache__/
+*.pyc
